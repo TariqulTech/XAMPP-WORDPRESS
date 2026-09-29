@@ -1,0 +1,153 @@
+XAMPP কাস্টম ডোমেইন কি ব্যবহার করতে পারবেন?
+
+
+আপনার স্ক্রিনশটটি দেখে আমি বুঝতে পেরেছি সমস্যাটি কোথায়। নতুন ডেভেলপারদের ক্ষেত্রে XAMPP ইন্সটল করার পর এই এররটি আসা একদম সাধারণ একটি বিষয়, এতে ভয় পাওয়ার কিছু নেই।
+আপনার দুটি প্রশ্নের উত্তরই আমি নিচে পরিষ্কারভাবে দিয়ে দিচ্ছি:
+
+১. XAMPP এর Apache চালু (Start) হচ্ছে না কেন?
+
+আপনার স্ক্রিনশটের লাল লেখায় বলা আছে "blocked port"। এর মানে হলো, Apache চালু হওয়ার জন্য Port 80 এবং Port 443 দরকার হয়। কিন্তু আপনার কম্পিউটারের অন্য কোনো সফটওয়্যার (যেমন: Skype, VMWare, অথবা Windows IIS) আগে থেকেই এই পোর্টটি দখল করে আছে।
+যেহেতু আপনি আগে IIS Manager নিয়ে কাজ করেছিলেন (আপনার আগের স্ক্রিনশট অনুযায়ী), তাই আমি ১০০% নিশ্চিত যে আপনার পিসির ব্যাকগ্রাউন্ডে IIS সার্ভারটি চালু আছে এবং সে Port 80 দখল করে রেখেছে।
+কীভাবে ঠিক করবেন? (সবচেয়ে কার্যকরী সমাধান)
+আপনাকে ব্যাকগ্রাউন্ডে চলা ওই সার্ভিসটি বন্ধ করে দিতে হবে। নিচের ধাপগুলো অনুসরণ করুন:
+১. আপনার পিসির নিচে সার্চ বক্সে গিয়ে লিখুন Services এবং অ্যাপটি ওপেন করুন (যেটির আইকন গিয়ার বা চাকার মতো)।
+২. সেখানে অনেকগুলো ফাইলের লিস্ট আসবে। মাউস দিয়ে স্ক্রল করে একদম নিচে 'W' সিরিয়ালে চলে যান।
+৩. সেখানে World Wide Web Publishing Service নামের একটি অপশন খুঁজুন।
+৪. সেটির ওপর মাউসের রাইট-ক্লিক করে Stop এ ক্লিক করুন।
+৫. (ভবিষ্যতে যেন এটি আর নিজে নিজে চালু না হয়, তাই ওটার ওপর আবার রাইট-ক্লিক করে Properties এ যান। সেখানে Startup type অপশনটি Automatic থেকে পরিবর্তন করে Manual বা Disabled করে OK দিন)।
+৬. এবার XAMPP কন্ট্রোল প্যানেলে এসে Start এ ক্লিক করুন। দেখবেন সাথে সাথেই Apache সবুজ রঙে চালু হয়ে যাবে!
+
+(বিঃদ্রঃ যদি কোনো কারণে উপরের ধাপে কাজ না করে, তবে আপনি httpd-vhosts.conf ফাইলে যে কোডগুলো বসিয়েছিলেন, সেখানে কোনো ব্র্যাকেট < > বা স্পেস দিতে ভুল করেছেন কিনা তা একবার চেক করে নেবেন। কোডে ভুল থাকলেও Apache স্টার্ট হয় না।)
+
+২. Cloudflare যুক্ত করার জন্য কী কী রেকর্ড বসাতে হবে?
+এখানে আপনার জন্য একটি দারুণ সুখবর আছে! আপনি যদি আমার আগের বলা "Cloudflare Tunnels (Zero Trust)" পদ্ধতি ব্যবহার করে আপনার ল্যাপটপের ওয়েবসাইট পুরো পৃথিবীকে দেখাতে চান, তবে আপনাকে Cloudflare-এর DNS সেকশনে নিজে থেকে কোনো রেকর্ড (A Record বা CNAME) বসাতে হবে না!
+কেন বসাতে হবে না? (ম্যাজিকটা যেভাবে কাজ করে):
+১. যখন আপনি Cloudflare Zero Trust ড্যাশবোর্ডে গিয়ে একটি Public Hostname (যেমন: tariqul.com) তৈরি করবেন এবং সেটিকে আপনার ল্যাপটপের localhost:80 এর সাথে কানেক্ট করবেন, তখন ক্লাউডফ্লেয়ার নিজে থেকেই একটি জাদুকরী কাজ করবে।
+২. ক্লাউডফ্লেয়ার অটোমেটিকভাবে আপনার ডোমেইনের DNS সেটিংসে গিয়ে একটি CNAME রেকর্ড তৈরি করে দেবে এবং সেটিকে আপনার ল্যাপটপের টানেলের সাথে যুক্ত করে দেবে।
+আপনার শুধু ২টি কাজ করতে হবে:
+১. ডোমেইন যেখান থেকে কিনেছেন (যেমন: Namecheap), সেখানে গিয়ে Cloudflare-এর দেওয়া Nameserver দুটি বসিয়ে ডোমেইনটিকে আগে ক্লাউডফ্লেয়ারে অ্যাক্টিভ (Active) করে নিতে হবে।
+২. এরপর সরাসরি Zero Trust ড্যাশবোর্ডে গিয়ে টানেল সেটআপ করতে হবে।
+তাহলেই Cloudflare বাকি সব রেকর্ড এবং ফ্রিতে SSL (https) নিজে থেকেই সেটআপ করে নেবে!
+আপনি আগে XAMPP এর Apache টি চালু করে নিন। চালু হয়ে গেলে আমাকে জানাবেন।
+
+
+
+হ্যাঁ, ১০০% পারবেন!
+XAMPP ব্যবহার করে আপনি আপনার ইচ্ছামতো যেকোনো কাস্টম ডোমেইন (যেমন: tariqul.com বা itadda.net) ব্যবহার করে ওয়েবসাইট রান করতে পারবেন।
+
+আপনার স্ক্রিনশট এবং প্রশ্নগুলো আমি খুব মনোযোগ দিয়ে দেখেছি। আপনি একদম প্রফেশনালদের মতো চিন্তা করছেন!
+প্রথমে আপনার স্ক্রিনশটের ভয়টি দূর করে দিই, এরপর ধাপে ধাপে বুঝিয়ে দিচ্ছি কীভাবে একসাথে একাধিক ওয়েবসাইট এবং কাস্টম ডোমেইন রান করবেন।
+
+১. স্ক্রিনশটের সতর্কবার্তা (Warning) এর মানে কী?
+এটি কোনো এরর বা সমস্যা নয়। উইন্ডোজের একটি সিকিউরিটি সিস্টেম আছে যার নাম UAC (User Account Control)। উইন্ডোজ আপনাকে বলছে, আপনি যেন XAMPP কে C:\Program Files ফোল্ডারের ভেতরে ইন্সটল না করেন। কারণ সেখানে ইন্সটল করলে ফাইল সেভ হতে সমস্যা হয়।
+সমাধান: আপনি শুধু "OK" তে ক্লিক করবেন এবং ইন্সটল করার সময় লোকেশন হিসেবে ডিফল্ট যেটা দেওয়া থাকে অর্থাৎ C:\xampp - ঠিক সেখানেই ইন্সটল করবেন। তাহলে আর কোনো সমস্যা হবে না।
+
+২. কয়টি ডোমেইন বা ওয়েবসাইট ব্যবহার করতে পারবেন?
+আনলিমিটেড!
+XAMPP-এ ওয়েবসাইটের কোনো লিমিট নেই। আপনার কম্পিউটারের হার্ডডিস্কে যত জায়গা আছে, আপনি ততগুলো কাস্টম ডোমেইন এবং ওয়েবসাইট একসাথে বানাতে ও রান করতে পারবেন (যেমন: site1.com, site2.net, tariqul.org ইত্যাদি)।
+
+৩. কীভাবে একাধিক কাস্টম ডোমেইন সেটআপ করবেন? (স্টেপ-বাই-স্টেপ)
+ধরে নিচ্ছি আমরা দুটি ওয়েবসাইট বানাব: tariqul.com এবং itadda.net। এই কাজটি করতে মাত্র ৩টি জায়গায় কাজ করতে হবে:
+
+ধাপ ১: ওয়েবসাইটের জন্য ফোল্ডার তৈরি করা
+XAMPP ইন্সটল হওয়ার পর আপনার পিসির C:\xampp\htdocs ফোল্ডারে যান। এই htdocs ফোল্ডারটিই হলো আপনার ওয়েবসাইটের আসল জায়গা (Server Root)।
+এখানে আপনার দুটি ওয়েবসাইটের জন্য আলাদা দুটি ফোল্ডার তৈরি করুন।
+উদাহরণস্বরূপ: একটি ফোল্ডারের নাম দিন tariqul_site এবং আরেকটির নাম দিন itadda_site। (এই ফোল্ডারগুলোর ভেতরেই পরে ওয়ার্ডপ্রেসের ফাইলগুলো রাখতে হবে)।
+
+ধাপ ২: Windows এর Hosts ফাইল এডিট করা (আগের নিয়মে)
+আগে যেভাবে Notepad কে 'Run as Administrator' দিয়ে ওপেন করেছিলেন, সেভাবে C:\Windows\System32\drivers\etc থেকে hosts ফাইলটি ওপেন করুন। একদম নিচে গিয়ে ডোমেইনগুলোর নাম দিন এবং সেভ করুন:
+
+127.0.0.1    tariqul.com
+127.0.0.1    itadda.net
+
+
+ধাপ ৩: XAMPP এর Virtual Hosts ফাইলে কোড যুক্ত করা (আসল ম্যাজিক)
+এখন XAMPP-কে বুঝিয়ে দিতে হবে যে কোন ডোমেইনে সার্চ করলে কোন ফোল্ডারটি ওপেন হবে।
+১. আপনার পিসির এই লোকেশনে যান: C:\xampp\apache\conf\extra
+২. এখানে httpd-vhosts.conf নামের একটি ফাইল পাবেন। ফাইলটির ওপর রাইট-ক্লিক করে Notepad দিয়ে ওপেন করুন।
+৩. একদম নিচে চলে যান এবং নিচের এই কোডগুলো হুবহু কপি করে পেস্ট করে দিন:
+
+# প্রথম ওয়েবসাইটের জন্য (tariqul.com)
+<VirtualHost *:80>
+    DocumentRoot "C:/xampp/htdocs/tariqul_site"
+    ServerName tariqul.com
+    <Directory "C:/xampp/htdocs/tariqul_site">
+        Options Indexes FollowSymLinks
+        AllowOverride All
+        Require all granted
+    </Directory>
+</VirtualHost>
+
+# দ্বিতীয় ওয়েবসাইটের জন্য (itadda.net)
+<VirtualHost *:80>
+    DocumentRoot "C:/xampp/htdocs/itadda_site"
+    ServerName itadda.net
+    <Directory "C:/xampp/htdocs/itadda_site">
+        Options Indexes FollowSymLinks
+        AllowOverride All
+        Require all granted
+    </Directory>
+</VirtualHost>
+
+(কোড বসানো হয়ে গেলে Ctrl + S চেপে সেভ করে দিন।)
+ধাপ ৪: XAMPP রিস্টার্ট দেওয়া
+এবার আপনার XAMPP Control Panel ওপেন করুন। അവിടെ Apache লেখাটির পাশে থাকা "Stop" বাটনে ক্লিক করে আবার "Start" বাটনে ক্লিক করুন (অর্থাৎ রিস্টার্ট দিন)।
+ব্যাস! কাজ শেষ! এখন আপনি ব্রাউজারে গিয়ে tariqul.com লিখলে প্রথম ফোল্ডারটি ওপেন হবে এবং itadda.net লিখলে দ্বিতীয় ফোল্ডারটি ওপেন হবে।
+৪. SSL (https://) এর বিষয়টি কীভাবে করবেন?
+লোকাল কম্পিউটারে XAMPP এর মাধ্যমে ম্যানুয়ালি SSL (তালা আইকন) সেট করা অনেক ঝামেলার এবং এটি করার পরও ব্রাউজার লাল রঙের ওয়ার্নিং দেখায় (কারণ সার্টিফিকেটটি আপনার নিজের বানানো, গুগলের ভেরিফাই করা নয়)।
+আমার প্রফেশনাল পরামর্শ:
+আপনার XAMPP এর ভেতরে SSL নিয়ে কোনো কাজ করার বা মাথা ঘামানোর দরকার নেই! আপনি যখন এই ওয়েবসাইটগুলো পুরো পৃথিবীকে দেখানোর জন্য Cloudflare Tunnel ব্যবহার করবেন, তখন Cloudflare আপনাকে একদম ফ্রিতে অটোমেটিক অরিজিনাল SSL (https) যুক্ত করে দেবে।
+তাই আপাতত লোকাল পিসিতে http:// দিয়েই কাজ চালিয়ে যান, ক্লাউডফ্লেয়ার যুক্ত করার সাথে সাথেই ওয়েবসাইট সিকিউর (https) হয়ে যাবে!
+
+
+  <footer class='site-footer'>
+    <div class='container footer-inner'>
+      <div class='footer-copy'>&#169; <script>document.write(new Date().getFullYear())</script> <data:blog.title/>. All rights reserved.</div>
+      <b:section id='Footer-Menu' showaddelement='no'>
+        <b:widget id='LinkList300' locked='false' title='Footer Links' type='LinkList' version='2' visible='true'>
+          <b:widget-settings>
+            <b:widget-setting name='link-5'>/p/privacy-policy.html</b:widget-setting>
+            <b:widget-setting name='link-6'>/p/comment-policy.html</b:widget-setting>
+            <b:widget-setting name='link-3'>/p/terms-of-use.html</b:widget-setting>
+            <b:widget-setting name='link-4'>/p/cookie-policy.html</b:widget-setting>
+            <b:widget-setting name='text-1'>Contact Us</b:widget-setting>
+            <b:widget-setting name='text-0'>About Us</b:widget-setting>
+            <b:widget-setting name='text-3'>Terms of Use</b:widget-setting>
+            <b:widget-setting name='text-2'>Disclaimer</b:widget-setting>
+            <b:widget-setting name='text-5'>Privacy Policy</b:widget-setting>
+            <b:widget-setting name='text-4'>Cookie Policy</b:widget-setting>
+            <b:widget-setting name='text-6'>Comment Policy</b:widget-setting>
+            <b:widget-setting name='sorting'>NONE</b:widget-setting>
+            <b:widget-setting name='link-1'>/p/contact-us.html</b:widget-setting>
+            <b:widget-setting name='link-2'>/p/disclaimer.html</b:widget-setting>
+            <b:widget-setting name='link-0'>/p/about-us.html</b:widget-setting>
+          </b:widget-settings>
+          <b:includable id='main'>
+            <div class='footer-links'>
+              <b:if cond='data:links'>
+                <b:loop values='data:links' var='link'>
+                  <a expr:href='data:link.target'><data:link.name/></a>
+                </b:loop>
+              <b:else/>
+                <a href='https://facebook.com'>Facebook</a>
+                <a href='/search'>All News</a>
+                <a href='/p/about.html'>About Us</a>
+                <a href='/p/submit.html'>Send info</a>
+                <a href='/p/contact.html'>Contact Us</a>
+                <a href='/p/privacy.html'>Privacy Policy</a>
+              </b:if>
+            </div>
+          </b:includable>
+          <b:includable id='content'>
+ <div class='widget-content'>
+   <ul>
+     <b:loop values='data:links' var='link'>
+       <li><a expr:href='data:link.target'><data:link.name/></a></li>
+     </b:loop>
+   </ul>
+ </div>
+</b:includable>
+        </b:widget>
+      </b:section>
+    </div>
+  </footer>

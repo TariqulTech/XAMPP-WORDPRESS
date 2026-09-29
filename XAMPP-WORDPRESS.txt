@@ -1,0 +1,297 @@
+XAMPP wordpress
+
+Database Name: wordpress
+Username: root
+Password: 
+
+wordpress
+Site Title: Work Tariqul Designs
+Username: designs_online
+Password: Designs$21
+
+
+vidIQ Vision for YouTube Login
+username: sophie25@dollicons.com
+password: Sophie$25
+
+
+Quora/mail.tm
+TikTok: TikTok$1122
+adorable62@dollicons.com
+4cRxE,c+7z
+
+Adorable$6222
+
+
+mail.tm
+alternative6652@emalupe.com
+(`2_%y!w>6
+
+
+MyPublicWiFi সফটওয়্যারটি ইন্টারনেট শেয়ারিং এবং রাউটিংয়ের জন্য ব্যাকগ্রাউন্ডে কম্পিউটারের Port 80 ব্যবহার করে।
+
+ধাপ ১: অ্যাপাচি কনফিগারেশন ফাইলে পোর্টের মূল সেটিংস ঠিক করা
+আপনার httpd-vhosts.conf ফাইলের একেবারে নিচের অংশটি ঠিক আছে, কিন্তু এক্সএএমপিপি যেন বুঝতে পারে যে অ্যাপাচি এখন 8080 পোর্টে চলবে, সেজন্য আরেকটি ফাইল চেক করতে হবে।
+
+XAMPP Control Panel থেকে Apache-এর পাশে থাকা Config বাটনে ক্লিক করুন এবং httpd.conf ফাইলটি ওপেন করুন।
+
+ফাইলটির ভেতর খুঁজুন Listen 80 লেখা আছে কি না। যদি থাকে, তবে সেটিকে পরিবর্তন করে লিখে দিন:
+Listen 8080
+
+ফাইলে একটু নিচে খুঁজুন ServerName localhost:80 লেখা আছে কি না। থাকলে সেটিকে করে দিন:
+ServerName localhost:8080
+
+ফাইলটি সেভ করুন। (এর ফলে অ্যাপাচি পুরোপুরি নিশ্চিত হবে যে সে এখন শুধু 8080 পোর্টে চলবে)।
+
+ধাপ ২: ভার্চুয়াল হোস্ট ফাইল ফিক্স করা
+আপনার দেওয়া ফাইলের শেষ অংশটি একদম ঠিক আছে, তবুও কোনো লুকানো স্পেস বা ভুল ক্যারেক্টার এড়াতে নিচের কোডটি হুবহু কপি করে আপনার httpd-vhosts.conf ফাইলের সবার নিচে বসিয়ে দিন এবং ফাইলটি সেভ করুন:
+
+<VirtualHost *:8080>
+    DocumentRoot "C:/xampp/htdocs/mywebsite"
+    ServerName work.tariquldesigns.online
+    <Directory "C:/xampp/htdocs/mywebsite">
+        Options Indexes FollowSymLinks
+        AllowOverride All
+        Require all granted
+    </Directory>
+</VirtualHost>
+
+চূড়ান্ত সমাধান: ডাটাবেস এবং কনফিগ ফাইল ঠিক করা
+১. wp-config.php ফাইলে ডোমেইন ফিক্সড করে দেওয়া (সবচেয়ে কার্যকরী উপায়):
+যেহেতু ডাটাবেস থেকে অনেক সময় লিংক পরিবর্তন করলেও কাজ করতে চায় না, তাই আপনি সরাসরি ওয়ার্ডপ্রেসের মূল ফাইলের ভেতর লিংক হার্ডকোড (Hardcode) করে দিতে পারেন।
+
+আপনার ল্যাপটপে C:\xampp\htdocs\mywebsite\ ফোল্ডারে যান।
+
+সেখানে থাকা wp-config.php ফাইলটি নোটপ্যাড দিয়ে ওপেন করুন।
+
+ফাইলের একদম শেষের দিকে বা /* That's all, stop editing! */ লেখাটির ঠিক উপরে এই দুটি লাইন বসিয়ে দিন:
+
+define('WP_HOME', 'https://work.tariquldesigns.online');
+define('WP_SITEURL', 'https://work.tariquldesigns.online');
+
+১. wp-config.php ফাইলের কোড প্লেসমেন্ট:
+আপনি যে কোড দুটি (WP_HOME এবং WP_SITEURL) বসিয়েছেন, সেগুলো ফাইলের একদম শেষের দিকে (require_once ABSPATH . 'wp-settings.php'; এর পরে) বসিয়েছেন। কিন্তু ওয়ার্ডপ্রেসের নিয়ম অনুযায়ী এই কনফিগ কনস্ট্যান্টগুলো অবশ্যই require_once ABSPATH . 'wp-settings.php'; এর আগে (বিশেষ করে /* That's all, stop editing! */ লেখাটির কাছাকাছি) রাখতে হয়, অন্যথায় ওয়ার্ডপ্রেস এই ভ্যালুগুলো রিড করার আগেই ফাইল লোড হয়ে যায়।
+
+২. ব্রাউজারের কুকি এরর (Error: Cookies are blocked or not supported by your browser):
+ভিডিওতে দেখা যাচ্ছে আপনি যখন লগইন পেজে ইউজারনেম-পাসওয়ার্ড দিচ্ছেন, তখন ব্রাউজারে একটি লাল রঙের কুকি সংক্রান্ত এরর দেখাচ্ছে। এর মূল কারণ হলো ক্লাউডফ্লেয়ারের মাধ্যমে যখন সাইটটি লোড হয়, তখন ব্রাউজার সিকিউরিটি বা সেটিংসে থার্ড-পার্টি কুকি ব্লক থাকার কারণে ওয়ার্ডপ্রেস কুকি সেট করতে পারে না।
+
+এই সমস্যা সমাধানের সঠিক উপায়:
+১. wp-config.php কোড সঠিকভাবে পজিশন করুন:
+আপনার wp-config.php ফাইলে গিয়ে কোড দুটিকে require_once ABSPATH . 'wp-settings.php'; এর আগে বসিয়ে দিন। যেমন নিচের মতো করে দিন:
+define('WP_HOME', 'https://work.tariquldesigns.online');
+define('WP_SITEURL', 'https://work.tariquldesigns.online');
+
+/* That's all, stop editing! Happy publishing. */
+
+if ( ! defined( 'ABSPATH' ) ) {
+    define( 'ABSPATH', __DIR__ . '/' );
+}
+require_once ABSPATH . 'wp-settings.php';
+
+
+ক্লাউডফ্লেয়ার আপনার ডোমেইনে HTTPS (SSL) এনফোর্স করছে, কিন্তু আপনার XAMPP লোকাল সার্ভারটি তখনো সাধারণ HTTP-তে চলছে—ফলে দুটোর মধ্যে বারবার রিডাইরেক্ট হতে গিয়ে এই লুপ তৈরি হচ্ছে।
+
+এই সমস্যা চিরতরে সমাধানের জন্য নিচে দেওয়া কাজটি করুন:
+১. Cloudflare ড্যাশবোর্ডে যান:
+
+আপনার ক্লাউডফ্লেয়ার অ্যাকাউন্টে লগইন করে work.tariquldesigns.online ডোমেইনটি সিলেক্ট করুন।
+
+বাম দিকের মেনু থেকে SSL/TLS এ ক্লিক করুন।
+
+ওভারভিউ ট্যাবটিতে দেখবেন SSL/TLS encryption mode সিলেক্ট করা আছে। সেটি যদি Full বা Strict করা থাকে, তবে পরিবর্তন করে সেটি Flexible করে দিন।
+(Flexible মোড সিলেক্ট করলে ক্লাউডফ্লেয়ার ভিজিটরের সাথে HTTPS রাখবে, কিন্তু আপনার লোকাল সার্ভারের সাথে HTTP-তে যোগাযোগ করবে, যার ফলে এই রিডাইরেক্ট লুপটি আর হবে না)।
+
+২. অথবা, কোডে HTTPS এনফোর্স করুন (যদি SSL মোড ফুল রাখতে চান):
+যদি আপনি ক্লাউডফ্লেয়ারে SSL মোড Full রাখতে চান, তবে ওয়ার্ডপ্রেসকে বুঝিয়ে দিতে হবে যে সাইটটি HTTPS-এ চলছে। এজন্য আপনার wp-config.php ফাইলের একদম উপরে বা ডাটাবেস সেটিংসের ঠিক নিচে এই কোডটি বসিয়ে দিন:
+
+if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
+    $_SERVER['HTTPS'] = 'on';
+}
+
+Cloudflare-এর SSL মোডটি Flexible করে দিয়ে ব্রাউজার ক্যাশ ক্লিয়ার করে অথবা নতুন একটি ইনকগনিটো উইন্ডোতে সাইটটি ওপেন করুন। ইনশাআল্লাহ, আর এই রিডাইরেক্ট এররটি দেখাবে না এবং সাইট একদম smoothly ওপেন হবে!
+
+ভবিষ্যতে আপনার কাজের সুবিধার্থে এবং নতুন কোনো ওয়েবসাইট লোকালহোস্ট থেকে ক্লাউডফ্লেয়ার টানেলের মাধ্যমে লাইভ করতে হলে ঠিক কী কী করতে হবে—তার একটি কমপ্লিট স্টেপ-বাই-স্টেপ গাইড নিচে তৈরি করে দিলাম। এটি আপনি কপি করে Google Keep বা নোটপ্যাডে সেভ করে রাখতে পারেন:
+
+📌 লোকাল ওয়ার্ডপ্রেস সাইট ক্লাউডফ্লেয়ার টানেলে লাইভ করার পূর্ণাঙ্গ গাইড
+১. wp-config.php ফাইলে ডোমেইন ও প্রক্সি ফিক্স করা
+আপনার প্রজেক্ট ফোল্ডারের (C:\xampp\htdocs\your-project\wp-config.php) ফাইলে গিয়ে /* That's all, stop editing! Happy publishing. */ লেখাটির ঠিক আগে নিচের কোডগুলো বসিয়ে দিতে হবে:
+
+// ১. ডাটাবেস কানেকশন ঠিক রাখা (আপনার ডাটাবেসের নাম অনুযায়ী বসাবেন)
+define( 'DB_NAME', 'your_database_name' );
+define( 'DB_USER', 'root' );
+define( 'DB_PASSWORD', '' );
+define( 'DB_HOST', 'localhost' );
+
+// ২. ডোমেইন হার্ডকোড করা (যাতে লোকালহোস্টে রিডাইরেক্ট না হয়)
+define('WP_HOME', 'https://yourdomain.com');
+define('WP_SITEURL', 'https://yourdomain.com');
+
+// ৩. ক্লাউডফ্লেয়ার SSL/HTTPS রিডাইরেক্ট লুপ (ERR_TOO_MANY_REDIRECTS) রোধ করার কোড
+if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
+    $_SERVER['HTTPS'] = 'on';
+}
+
+
+২. ক্লাউডফ্লেয়ার জিরো ট্রাস্ট (Cloudflare Zero Trust) টানেল সেটআপ
+Public Hostnames এ গিয়ে নতুন রুট যোগ করুন:
+
+Domain: yourdomain.com (আপনার নিজস্ব ডোমেইন বা সাব-ডোমেইন)
+
+Service: HTTP
+
+URL: localhost:8080 (অথবা আপনার লোকাল প্রজেক্টের পোর্ট নম্বর)
+
+Path: একদম ফাঁকা রাখতে হবে।
+
+৩. ক্লাউডফ্লেয়ার SSL/TLS সেটিংস
+ক্লাউডফ্লেয়ার ড্যাশবোর্ডের SSL/TLS > Overview এ গিয়ে এনক্রিপশন মোডটি Flexible সিলেক্ট করে দিতে হবে। (এর ফলে ক্লাউডফ্লেয়ার ভিজিটরের সাথে HTTPS রাখবে, কিন্তু লোকাল সার্ভারের সাথে HTTP-তে যোগাযোগ করবে)।
+
+
+🆕 ভবিষ্যতে নতুন কোনো ওয়েবসাইট যুক্ত করার নিয়ম:
+ভবিষ্যতে আরেকটি নতুন সাইট (যেমন: site2.tariquldesigns.online) যুক্ত করতে চাইলে এই স্টেপগুলো ফলো করবেন:
+
+XAMPP-এর htdocs-এ নতুন সাইটের ফোল্ডার রাখবেন (যেমন: site2) এবং ওয়ার্ডপ্রেস ইনস্টল করবেন।
+
+phpMyAdmin-এ নতুন ডাটাবেস তৈরি করবেন এবং wp-config.php ফাইলে ডাটাবেসের সঠিক নাম বসাবেন।
+
+wp-config.php ফাইলের নির্দিষ্ট জায়গায় উপরে দেওয়া কোডগুলোর মতো নতুন ডোমেইনের নাম বসিয়ে দেবেন:
+define('WP_HOME', 'https://site2.tariquldesigns.online');
+define('WP_SITEURL', 'https://site2.tariquldesigns.online');
+
+ফাইলের বিবরণ ও লোকেশন:
+ফাইলের নাম: httpd-vhosts.conf
+
+ফাইল লোকেশন: C:\xampp\apache\conf\extra\
+এই ফাইলে নতুন একটি ভার্চুয়াল হোস্ট (Virtual Host) কনফিগারেশন যোগ করা হয়েছে, যেখানে নিচের বিষয়গুলো রয়েছে:
+
+পোর্ট: 8080 (<VirtualHost *:8080>)
+
+ডকুমেন্ট রুট (DocumentRoot): "C:/xampp/htdocs/mywebsite"
+
+সার্ভার নেম (ServerName): work.tariquldesigns.online
+
+ডাইরেক্টরি পারমিশন (Directory Settings):
+
+Options Indexes FollowSymLinks
+
+AllowOverride All
+
+Require all granted
+
+
+২. নতুন কোনো সাইট বা ডোমেইন যুক্ত করার নিয়ম
+ভবিষ্যতে লোকাল XAMPP সেটআপে নতুন আরেকটি ওয়েবসাইট যুক্ত করতে চাইলে পর্যায়ক্রমে নিচের ফাইলগুলোতে পরিবর্তন আনতে হবে:
+
+ধাপ ২: Apache VirtualHost ফাইলে কনফিগারেশন যোগ করা
+ফাইল: C:\xampp\apache\conf\extra\httpd-vhosts.conf
+
+কী যুক্ত করবেন: নতুন ওয়েবসাইটের জন্য একটি নতুন <VirtualHost> ব্লক যুক্ত করতে হবে:
+
+<VirtualHost *:8080>
+    DocumentRoot "C:/xampp/htdocs/newsite"
+    ServerName newsite.local
+    <Directory "C:/xampp/htdocs/newsite">
+        Options Indexes FollowSymLinks
+        AllowOverride All
+        Require all granted
+    </Directory>
+</VirtualHost>
+
+(এখানে newsite এবং newsite.local-এর জায়গায় আপনার নতুন ফোল্ডারের নাম ও ডোমেইন বসাবেন।)
+
+
+ধাপ ৩: নতুন সাইটের wp-config.php ফাইল কনফিগার করা
+ফাইল: C:\xampp\htdocs\newsite\wp-config.php
+
+কী যুক্ত করবেন: নতুন ওয়ার্ডপ্রেস সাইটের ডোমেইন সেটআপ রাখতে ডাটাবেজ কানেকশনের পর নিচের লাইনগুলো যুক্ত করতে পারেন:
+
+define('WP_HOME', 'http://newsite.local:8080');
+define('WP_SITEURL', 'http://newsite.local:8080');
+
+ধাপ ৪: Apache Server রিস্টার্ট
+সব ফাইল সেভ করার পর XAMPP Control Panel থেকে Apache সার্ভিসটি Stop করে পুনরায় Start করতে হবে।
+
+১. একই ওয়ার্ডপ্রেসের ভেতর থেকে একাধিক ডোমেইন/ওয়েবসাইট রান করানো (WordPress Multisite)
+আপনি যদি চান একটিমাত্র ওয়ার্ডপ্রেস ইনস্টলেশন (বা ফোল্ডার) ব্যবহার করে একাধিক আলাদা ওয়েবসাইট এবং ডোমেইন পরিচালনা করতে, তবে আপনাকে WordPress Multisite Network ফিচারটি চালু করতে হবে।
+
+কীভাবে করবেন:
+
+আপনার wp-config.php ফাইলটি ওপেন করুন (যেটি আপনার সাইটের মূল ফোল্ডারে আছে)।
+
+ফাইলে /* That's all, stop editing! Happy publishing. */ লেখাটির ঠিক আগে নিচের লাইনটি যুক্ত করুন:
+
+define( 'WP_ALLOW_MULTISITE', true );
+
+
+
+ফাইল সেভ করে আপনার ওয়ার্ডপ্রেস ড্যাশবোর্ডে লগইন করুন।
+
+Tools > Network Setup-এ যান। সেখানে আপনার নেটওয়ার্কের নাম দিয়ে "Install" এ ক্লিক করুন।
+
+এরপর ওয়ার্ডপ্রেস আপনাকে wp-config.php এবং .htaccess ফাইলে যোগ করার জন্য কিছু কোড দেবে। সেগুলো নির্দিষ্ট ফাইলে কপি-পেস্ট করুন।
+
+এরপর আপনি ড্যাশবোর্ডের Network Admin থেকে নতুন নতুন সাইট তৈরি করতে পারবেন এবং প্লাগইন (যেমন: WordPress MU Domain Mapping) ব্যবহার করে আলাদা কাস্টম ডোমেইন যুক্ত করতে পারবেন।
+
+২. আলাদা ফোল্ডার দিয়ে আলাদা ওয়েবসাইট রান করানো (VirtualHost পদ্ধতি)
+আপনার পিসিতে C:\xampp\htdocs\ এর ভেতর যদি আলাদা আলাদা ফোল্ডার থাকে (যেমন: project1, project2) এবং আপনি সেগুলোকে আলাদা ডোমেইন (যেমন: project1.local, project2.local) দিয়ে রান করাতে চান, তবে আগের নিয়মেই কাজ করতে হবে।
+
+VirtualHost যোগ: C:\xampp\apache\conf\extra\httpd-vhosts.conf ফাইলে নতুন ফোল্ডারের জন্য ব্লক যোগ করুন:
+
+<VirtualHost *:8080>
+    DocumentRoot "C:/xampp/htdocs/project2"
+    ServerName project2.local
+    <Directory "C:/xampp/htdocs/project2">
+        Options Indexes FollowSymLinks
+        AllowOverride All
+        Require all granted
+    </Directory>
+</VirtualHost>
+
+Apache রিস্টার্ট: XAMPP প্যানেল থেকে Apache স্টপ করে আবার স্টার্ট করুন।
+
+৩. লোকাল ফাইলগুলো রেখে Cloudflare-এর মাধ্যমে সাইট লাইভ করা (Cloudflare Tunnels)
+আপনার লোকাল পিসিতে থাকা ওয়েবসাইটটিকে ক্লাউডফ্লেয়ারের মাধ্যমে লাইভ ডোমেইনে (পাবলিক ইন্টারনেটে) প্রকাশ করতে হলে সবচেয়ে নিরাপদ ও সহজ পদ্ধতি হলো Cloudflare Tunnels (Zero Trust) ব্যবহার করা। এর জন্য আপনার পিসির কোনো পোর্ট ফরোয়ার্ড করার প্রয়োজন নেই।
+
+ধাপসমূহ:
+
+ধাপ ১: ক্লাউডফ্লেয়ারে ডোমেইন যুক্ত করা
+
+প্রথমে আপনার কেনা ডোমেইনটি Cloudflare-এ অ্যাড করুন এবং নেমসার্ভার আপডেট করে অ্যাকটিভ করুন।
+
+ধাপ ২: Cloudflare Zero Trust সেটআপ
+
+Cloudflare ড্যাশবোর্ডের বাম পাশের মেনু থেকে Zero Trust-এ ক্লিক করুন।
+
+এরপর Networks > Tunnels-এ যান এবং Create a tunnel এ ক্লিক করুন।
+
+টানেল টাইপ হিসেবে Cloudflared সিলেক্ট করুন এবং একটি নাম দিন (যেমন: MyLocalServer) এবং সেভ করুন।
+
+ধাপ ৩: আপনার পিসিতে ক্লাউডফ্লেয়ার কানেক্টর ইনস্টল করা
+
+টানেল তৈরি হলে আপনি একটি ইনস্টলেশন পেজ দেখতে পাবেন। সেখান থেকে Windows অপারেটিং সিস্টেম সিলেক্ট করুন।
+
+নিচে একটি কমান্ড (Command) দেওয়া থাকবে। আপনার কম্পিউটারে Command Prompt (CMD) অ্যাডমিনিস্ট্রেটর হিসেবে রান করুন (Run as Administrator) এবং ওই কমান্ডটি পেস্ট করে Enter দিন। এটি আপনার পিসিতে ক্লাউডফ্লেয়ার টানেল সার্ভিসটি ইনস্টল ও কানেক্ট করবে।
+
+ধাপ ৪: ডোমেইন ও লোকাল পোর্টের সাথে লিংক করা (Public Hostname)
+
+কানেকশন সফল হলে ক্লাউডফ্লেয়ার পেজে "Next" এ ক্লিক করুন। এখানে Public Hostname সেটআপ করতে হবে।
+
+Subdomain/Domain: আপনার ডোমেইনটি সিলেক্ট করুন (যে ডোমেইনে সাইটটি লাইভ দেখাতে চান)।
+
+Service:
+
+Type: HTTP সিলেক্ট করুন।
+
+URL: localhost:8080 দিন (যেহেতু আপনার অ্যাপাচি লোকালহোস্টে 8080 পোর্টে চলছে)।
+
+এবার Save Tunnel-এ ক্লিক করুন।
+
+ধাপ ৫: লাইভ ডোমেইনের জন্য ওয়ার্ডপ্রেস আপডেট করা
+টানেল তৈরি হয়ে গেলে আপনার ওয়েবসাইট ওই লাইভ ডোমেইনে ভিজিট করা যাবে। তবে ওয়ার্ডপ্রেস যেন ডিজাইন ভেঙে না ফেলে বা লোকালহোস্টে রিডাইরেক্ট না করে, সেজন্য আপনার ওই ওয়েবসাইটের wp-config.php ফাইলে নিচের লাইন দুটি যোগ করতে হবে (আগের লোকাল লিংক থাকলে সেটি মুছে বা আপডেট করে):
+
+define('WP_HOME', 'https://yourlivedomain.com');
+define('WP_SITEURL', 'https://yourlivedomain.com');
+
+(এখানে yourlivedomain.com এর জায়গায় আপনার আসল ক্লাউডফ্লেয়ার ডোমেইনের নাম দেবেন)।
+
+এখন, আপনার পিসিতে যতক্ষণ XAMPP চালু থাকবে এবং পিসিতে ইন্টারনেট কানেকশন থাকবে, ততক্ষণ বিশ্বের যেকোনো জায়গা থেকে আপনার ডোমেইনে ভিজিট করলে আপনার লোকাল পিসির ওয়েবসাইটটি লাইভ দেখা যাবে।
